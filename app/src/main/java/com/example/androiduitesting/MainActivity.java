@@ -2,8 +2,10 @@ package com.example.androiduitesting;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     // Declare the variables so that you will be able to reference it later.
@@ -30,16 +33,26 @@ public class MainActivity extends AppCompatActivity {
 
         cityList = findViewById(R.id.city_list);
 
-        //String []cities ={"Edmonton", "Vancouver", "Moscow", "Sydney", "Berlin", "Vienna", "Tokyo", "Beijing", "Osaka", "New Delhi"};
+        String []cities ={"Edmonton", "Vancouver", "Moscow", "Sydney", "Berlin", "Vienna", "Tokyo", "Beijing", "Osaka", "New Delhi"};
 
         dataList = new ArrayList<>();
 
-        //dataList.addAll(Arrays.asList(cities));
+        dataList.addAll(Arrays.asList(cities));
 
         cityAdapter = new ArrayAdapter<>(this, R.layout.content, dataList);
 
 
         cityList.setAdapter(cityAdapter);
+
+        cityList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String cityName = dataList.get(position);
+                Intent intent = new Intent(MainActivity.this, ShowActivity.class);
+                intent.putExtra("cityName", cityName);
+                startActivity(intent);
+            }
+        });
 
         final Button addButton = findViewById(R.id.button_add);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -52,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String cityName = newName.getText().toString();
-                cityAdapter.add(cityName);
-                newName.getText().clear();
-                nameField.setVisibility(View.INVISIBLE);
+                if (!cityName.isEmpty()) {
+                    cityAdapter.add(cityName);
+                    newName.getText().clear();
+                    nameField.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
